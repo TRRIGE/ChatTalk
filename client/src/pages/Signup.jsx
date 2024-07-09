@@ -20,23 +20,19 @@ const Signup = () => {
     const { username, email, password } = values;
 
     registerUser({ username, email, password })
-      .then((data) => {
-        if (!data) {
-          // if (data.message === "User already exists") {
-          //   alert("User already exists with this email");
-          //   console.log("User already exists with this email");
-          // }
-          // console.log("Signup failed due to some error");
-          console.log("Signup failed");
-        } else {
-          console.log("Signup successful");
+      .then((response) => {
+        if (response.status) {
+          navigate("/signin");
           setValues({
             username: "",
             email: "",
             password: "",
           });
-          navigate("/signin");
+          console.log("Signup successful");
         }
+        // else {
+        //   alert("User already exists with this email");
+        // }
       })
       .catch((error) => {
         alert("User already exists with this email");
@@ -48,8 +44,12 @@ const Signup = () => {
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-md-6">
-          <h1 className="text-center mt-5 mb-5">Signup For ChatTalk</h1>
-          <form id="signupForm" onSubmit={onsubmitHandler}>
+          <h1 className="text-center mt-5 mb-3">Signup For ChatTalk</h1>
+          <form
+            id="signupForm"
+            onSubmit={onsubmitHandler}
+            className="border border-2 border-secondary p-4 rounded-4"
+          >
             <div className="form-group mb-3">
               <label htmlFor="username">Username</label>
               <input
