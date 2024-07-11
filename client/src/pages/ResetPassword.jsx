@@ -1,24 +1,25 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { forgotPassword } from "../api/user.api";
+import { useNavigate, useParams } from "react-router-dom";
+import { resetPassword } from "../api/user.api";
 
-const ForgotPassword = () => {
+const ResetPassword = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { token } = useParams();
 
   const onchangeHandler = (e) => {
-    setEmail(e.target.value);
+    setPassword(e.target.value);
   };
 
   const onsubmitHandler = (e) => {
     e.preventDefault();
 
-    forgotPassword({ email })
+    resetPassword({ password, token })
       .then((response) => {
         if (response.status) {
-          alert("Email sent successfully for password reset");
           navigate("/signin");
         }
+        console.log(response.message);
       })
       .catch((error) => {
         console.log("Error while loging user", error);
@@ -29,28 +30,28 @@ const ForgotPassword = () => {
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-md-6">
-          <h1 className="text-center mt-5 mb-5">Forget Password</h1>
+          <h1 className="text-center mt-5 mb-5">Reset Password</h1>
           <form
             id="signinForm"
             onSubmit={onsubmitHandler}
             className="border border-2 border-secondary p-4 rounded-4"
           >
             <div className="form-group mb-3">
-              <label htmlFor="email">Email address</label>
+              <label htmlFor="password">New Password</label>
               <input
-                type="email"
+                type="password"
                 className="form-control"
-                id="email"
-                placeholder="Enter email"
-                value={email}
-                name="email"
+                id="password"
+                placeholder="Enter new password"
+                value={password}
+                name="password"
                 onChange={onchangeHandler}
                 required
               />
             </div>
             <div className="d-grid">
               <button type="submit" className="btn btn-secondary btn-block">
-                Send Email
+                Reset Password
               </button>
             </div>
           </form>
@@ -60,4 +61,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ResetPassword;

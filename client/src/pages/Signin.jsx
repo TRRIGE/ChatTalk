@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/user.api";
-import axios from "axios";
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -14,7 +13,6 @@ const Signin = () => {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  axios.defaults.withCredentials = true;
   const onsubmitHandler = (e) => {
     e.preventDefault();
 

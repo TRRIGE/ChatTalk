@@ -38,7 +38,7 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ status: false, message: "Invalid password" });
         }
 
-        const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
         res.cookie("token", token, { maxAge: 3600000, httpOnly: true });
         return res.status(200).json({ status: true, message: "User logged in successfully" });
 
@@ -56,26 +56,30 @@ const forgotPassword = async (req, res) => {
             return res.status(400).json({ status: false, message: "User is not register" });
         }
 
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "5m" });
+
         var transporter = nodemailer.createTransport({
             service: 'gmail',
+            secure: true,
+            port: 465,
             auth: {
-                user: 'youremail@gmail.com',
-                pass: 'yourpassword'
+                user: 'rutujakothekar2@gmail.com',
+                pass: 'oceo chjv kumz idrn'
             }
         });
 
         var mailOptions = {
-            from: 'youremail@gmail.com',
-            to: 'myfriend@yahoo.com',
-            subject: 'Sending Email using Node.js',
-            text: 'That was easy!'
+            from: 'rutujakothekar2@gmail.com',
+            to: email,
+            subject: 'Email from ChatTalk',
+            text: `Please click on the link to reset your password: http://localhost:5173/reset-password/${token}`
         };
 
-        transporter.sendMail(mailOptions, function (error, info) {
+        transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                console.log(error);
+                return res.status(400).json({ status: false, message: "Email not sent" });
             } else {
-                console.log('Email sent: ' + info.response);
+                return res.status(200).json({ status: true, message: "Email sent successfully for password reset" });
             }
         });
 
@@ -84,8 +88,59 @@ const forgotPassword = async (req, res) => {
     }
 }
 
+const resetPassword = async (req, res) => {
+    try {
+        const { token, password } = req.body;
+        if (!token) {
+            return res.status(400).json({ status: false, message: "Token is missing" });
+        }
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id;
+
+        if (!userId) {
+            return res.status(400).json({ status: false, message: "Invalid token" });
+        }
+
+        const hashPassword = await bcrypt.hash(password, 10);
+        await User.findByIdAndUpdate({ _id: userId }, { password: hashPassword });
+
+        return res.status(200).json({ status: true, message: "Password reset successfully" });
+    } catch (error) {
+        res.status(500).json({ status: false, message: error.message });
+    }
+};
+
+const verifyUser = (req, res, next) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(400).json({ status: false, message: "User not verified and no token present" });
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (error) {
+        res.status(500).json({ status: false, message: error.message });
+    }
+
+}
+
+const logoutUser = (req, res) => {
+    try {
+        res.clearCookie("token");
+        return res.status(200).json({ status: true, message: "User logged out successfully" });
+    } catch (error) {
+        res.status(500).json({ status: false, message: error.message });
+    }
+
+}
+
 export {
     createUser,
     loginUser,
-    forgotPassword
+    forgotPassword,
+    resetPassword,
+    verifyUser,
+    logoutUser
 }
