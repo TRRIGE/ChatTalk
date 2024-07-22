@@ -3,6 +3,8 @@ import nodemailer from "nodemailer";
 import User from "../models/user.model.js"
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { GoogleGenerativeAI } from "@google/generative-ai"
+
 
 const createUser = async (req, res) => {
     try {
@@ -136,11 +138,36 @@ const logoutUser = (req, res) => {
 
 }
 
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+const getGeminiAIResponse = async (req, res) => {
+    try {
+        const prompt = req.body
+
+        const generationConfig = {
+            stopSequences: ["red"],
+            maxOutputTokens: 200,
+            temperature: 0.9,
+            topP: 0.1,
+            topK: 16,
+        };
+
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig });
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.candidates[0].content.parts[0].text;
+        return res.status(200).json({ status: true, message: text });
+    } catch (error) {
+        return res.status(500).json({ status: false, message: error.message });
+    }
+}
+
 export {
     createUser,
     loginUser,
     forgotPassword,
     resetPassword,
     verifyUser,
-    logoutUser
+    logoutUser,
+    getGeminiAIResponse
 }

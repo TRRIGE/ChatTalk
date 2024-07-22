@@ -39,16 +39,22 @@ const Navbar = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link className="nav-link" to="/signup">
-                Signup
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/signin">
-                Sign In
-              </Link>
-            </li>
+            {location.pathname === "/home" ? (
+              ""
+            ) : (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/signup">
+                    Signup
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/signin">
+                    Sign In
+                  </Link>
+                </li>
+              </>
+            )}
             {location.pathname === "/home" && (
               <li className="nav-item">
                 <Link className="nav-link" to="#" onClick={handleOut}>
