@@ -4,7 +4,8 @@ const REGISTER_API_URL = "http://localhost:3000/user/signup";
 const LOGIN_API_URL = "http://localhost:3000/user/signin";
 const FORGOT_PASSWORD_API_URL = "http://localhost:3000/user/forgot-password";
 const RESET_PASSWORD_API_URL = "http://localhost:3000/user/reset-password";
-// const VERIFY_USER_API_URL = "http://localhost:3000/user/verify-user";
+const VERIFY_USER_API_URL = "http://localhost:3000/user/verify-user";
+const GEMIN_API_URL = "http://localhost:3000/user/chat";
 axios.defaults.withCredentials = true;
 
 const registerUser = async (userData) => {
@@ -68,10 +69,29 @@ const resetPassword = async (userData) => {
 //     }
 // }
 
+const verifyUser = async () => {
+    try {
+        const response = await axios.get(VERIFY_USER_API_URL);
+        return response.data;
+    } catch (error) {
+        throw new Error(error.response ? error.response.data : error.message);
+    }
+};
+
+const GeminApi = async (input) => {
+    try {
+        const response = await axios.post(GEMIN_API_URL, { input })
+        return response.data;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
 export {
     registerUser,
     loginUser,
     forgotPassword,
     resetPassword,
-    // verifyUser
+    GeminApi,
+    verifyUser
 }

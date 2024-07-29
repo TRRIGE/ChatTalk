@@ -142,20 +142,31 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const getGeminiAIResponse = async (req, res) => {
     try {
-        const prompt = req.body
-
-        const generationConfig = {
-            stopSequences: ["red"],
-            maxOutputTokens: 200,
-            temperature: 0.9,
-            topP: 0.1,
-            topK: 16,
+        const prompt = {
+            contents: [
+                {
+                    parts: [
+                        {
+                            text: req.body?.input
+                        }
+                    ]
+                }
+            ]
         };
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash", generationConfig });
+        // const generationConfig = {
+        //     stopSequences: ["red"],
+        //     maxOutputTokens: 200,
+        //     temperature: 0.9,
+        //     topP: 0.1,
+        //     topK: 16,
+        // };
+
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(prompt);
-        const response = await result.response;
-        const text = response.candidates[0].content.parts[0].text;
+        const response = result.response;
+        let text = response.candidates[0].content.parts[0].text;
+        text = text.replace(/\*/g, "");
         return res.status(200).json({ status: true, message: text });
     } catch (error) {
         return res.status(500).json({ status: false, message: error.message });
@@ -169,5 +180,5 @@ export {
     resetPassword,
     verifyUser,
     logoutUser,
-    getGeminiAIResponse
+    getGeminiAIResponse,
 }

@@ -44,7 +44,7 @@ const Signup = () => {
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-md-6">
-          <h1 className="text-center mt-5 mb-3">Signup For ChatTalk</h1>
+          <h1 className="text-center mt-3 mb-3">Signup For ChatTalk</h1>
           <form
             id="signupForm"
             onSubmit={onsubmitHandler}

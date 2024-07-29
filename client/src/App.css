@@ -23,6 +23,10 @@ body {
   border: none;
 }
 
+#textsmall {
+  font-size: 12.5px;
+}
+
 .active {
   background: #f6f7fb !important;
   border-color: #f6f7fb !important;
@@ -134,4 +138,43 @@ body {
   background-color: #572ce8;
   color: #572ce8;
   font-weight: 700;
+}
+
+.card {
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.recent-prompts-card h6 {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.list-group-item {
+  border: none;
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+}
+
+.list-group-item:hover {
+  background-color: #e9ecef;
+}
+
+.inputs input {
+  border-radius: 5px;
+}
+
+.star {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+}
+
+.time-text {
+  margin: 0;
 }
