@@ -1,22 +1,20 @@
 import React from "react";
-import axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { logoutUser } from "../api/user.api";
 
 const Navbar = () => {
-  axios.defaults.withCredentials = true;
   const location = useLocation();
   const navigation = useNavigate();
 
   const handleOut = () => {
-    axios
-      .get("http://localhost:3000/user/logout")
+    logoutUser()
       .then((response) => {
-        if (response.data.status) {
+        if (response.status) {
           navigation("/");
         }
       })
       .catch((error) => {
-        console.log("Error while logging out", error);
+        console.log(error.message);
       });
   };
 
@@ -40,7 +38,11 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             {location.pathname === "/home" ? (
-              ""
+              <li className="nav-item">
+                <Link className="nav-link" to="#" onClick={handleOut}>
+                  Logout
+                </Link>
+              </li>
             ) : (
               <>
                 <li className="nav-item">
@@ -54,13 +56,6 @@ const Navbar = () => {
                   </Link>
                 </li>
               </>
-            )}
-            {location.pathname === "/home" && (
-              <li className="nav-item">
-                <Link className="nav-link" to="#" onClick={handleOut}>
-                  Logout
-                </Link>
-              </li>
             )}
           </ul>
         </div>

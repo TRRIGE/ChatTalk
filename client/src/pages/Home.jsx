@@ -5,30 +5,30 @@ import {
   IoCheckmarkOutline,
 } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { GeminApi, verifyUser } from "../api/user.api";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState(null);
   const navigate = useNavigate();
-  axios.defaults.withCredentials = true;
 
   useEffect(() => {
     verifyUser()
-      .then((response) => {
-        if (response.status) {
-          setIsLoading(false);
+      .then((response) => {})
+      .catch((error) => {
+        if (error.message === "User not verified and no token present") {
+          toast.error("Please Signin to continue");
+          setTimeout(() => {
+            navigate("/signin");
+          }, 2000);
         } else {
+          alert(error.message);
           navigate("/");
         }
-      })
-      .catch((error) => {
-        console.log("Error while verifying user", error);
-        navigate("/");
       });
   }, [navigate]);
 
@@ -42,11 +42,10 @@ const Home = () => {
       .then((response) => {
         setResponse(response.message);
         setIsProcessing(false);
-        console.log("Response from OpenAI", response.data.message);
       })
       .catch((error) => {
         console.log("Error while sending message", error);
-        setIsProcessing(false);
+        setIsProcessing(true);
       });
   };
 
@@ -61,11 +60,10 @@ const Home = () => {
       .writeText(text)
       .then(() => {
         setCopiedPrompt(index);
-        console.log("Text copied to clipboard: ", text);
         setTimeout(() => setCopiedPrompt(null), 2000);
       })
       .catch((err) => {
-        console.error("Could not copy text: ", err);
+        console.error("Could not copy text: ", err.message);
       });
   };
 
@@ -73,6 +71,7 @@ const Home = () => {
     <>
       <h1 className="text-center mt-3">Welcome to ChatTalk</h1>
       <div className="container-fluid">
+        <ToastContainer />
         <div className="row d-flex justify-content-center mt-3">
           <div className="col-md-5">
             <div className="card recent-prompts-card">

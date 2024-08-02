@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { registerUser } from "../api/user.api";
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -22,26 +24,29 @@ const Signup = () => {
     registerUser({ username, email, password })
       .then((response) => {
         if (response.status) {
-          navigate("/signin");
+          toast.success("Signup successful");
           setValues({
             username: "",
             email: "",
             password: "",
           });
-          console.log("Signup successful");
+          setTimeout(() => {
+            navigate("/signin");
+          }, 2000);
         }
-        // else {
-        //   alert("User already exists with this email");
-        // }
       })
       .catch((error) => {
-        alert("User already exists with this email");
-        console.log("Error while registering user", error);
+        if (error.message === "User already exists") {
+          toast.error("User already exists with this email");
+        } else {
+          toast.error(error.message);
+        }
       });
   };
 
   return (
     <div className="container">
+      <ToastContainer />
       <div className="row justify-content-center">
         <div className="col-md-6">
           <h1 className="text-center mt-3 mb-3">Signup For ChatTalk</h1>

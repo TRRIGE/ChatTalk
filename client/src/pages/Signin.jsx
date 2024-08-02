@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../api/user.api";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -21,29 +23,40 @@ const Signin = () => {
     loginUser({ email, password })
       .then((response) => {
         if (response.status) {
-          navigate("/home");
+          toast.success("Signin successful. Redirecting to home page...");
+          setValues({ email: "", password: "" });
+          setTimeout(() => {
+            navigate("/home");
+          }, 2000);
         }
       })
       .catch((error) => {
-        console.log("Error while loging user", error);
+        if (error.message === "User is not registered") {
+          toast.error("Email not found. Please register first.");
+        } else if (error.message === "Invalid password") {
+          toast.error("Incorrect password. Please try again.");
+        } else {
+          toast.error(error.message);
+        }
       });
   };
 
   return (
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <h1 class="text-center mt-5 mb-3">Sign In to ChatTalk</h1>
+    <div className="container">
+      <ToastContainer />
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <h1 className="text-center mt-5 mb-3">Sign In to ChatTalk</h1>
           <form
             id="signinForm"
             onSubmit={onsubmitHandler}
             className="border border-2 border-secondary p-4 rounded-4"
           >
-            <div class="form-group mb-3">
-              <label for="email">Email address</label>
+            <div className="form-group mb-3">
+              <label htmlFor="email">Email address</label>
               <input
                 type="email"
-                class="form-control"
+                className="form-control"
                 id="email"
                 placeholder="Enter email"
                 value={values.email}
@@ -52,11 +65,11 @@ const Signin = () => {
                 required
               />
             </div>
-            <div class="form-group mb-3">
-              <label for="password">Password</label>
+            <div className="form-group mb-3">
+              <label htmlFor="password">Password</label>
               <input
                 type="password"
-                class="form-control"
+                className="form-control"
                 id="password"
                 value={values.password}
                 name="password"
@@ -66,19 +79,19 @@ const Signin = () => {
               />
             </div>
             <div className="d-grid">
-              <button type="submit" class="btn btn-secondary btn-block">
+              <button type="submit" className="btn btn-secondary btn-block">
                 Sign In
               </button>
             </div>
             <div>
               <p>
-                <Link to="/forgot-password" class="text-secondary">
+                <Link to="/forgot-password" className="text-secondary">
                   Forgot Password?
                 </Link>
               </p>
-              <p class="text-center mt-3">
+              <p className="text-center mt-3">
                 Don't have an account?{" "}
-                <Link to="/signup" class="text-secondary">
+                <Link to="/signup" className="text-secondary">
                   Sign Up
                 </Link>
               </p>

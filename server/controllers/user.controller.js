@@ -32,16 +32,19 @@ const loginUser = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(400).json({ status: false, message: "User is not register" });
+            return res.status(400).json({ status: false, message: "User is not registered" });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
+
         if (!isPasswordValid) {
             return res.status(400).json({ status: false, message: "Invalid password" });
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
         res.cookie("token", token, { maxAge: 3600000, httpOnly: true });
+
         return res.status(200).json({ status: true, message: "User logged in successfully" });
 
     } catch (error) {
@@ -105,6 +108,7 @@ const resetPassword = async (req, res) => {
         }
 
         const hashPassword = await bcrypt.hash(password, 10);
+
         await User.findByIdAndUpdate({ _id: userId }, { password: hashPassword });
 
         return res.status(200).json({ status: true, message: "Password reset successfully" });

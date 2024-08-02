@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { resetPassword } from "../api/user.api";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -17,7 +19,11 @@ const ResetPassword = () => {
     resetPassword({ password, token })
       .then((response) => {
         if (response.status) {
-          navigate("/signin");
+          toast.success("Password reset successfully");
+          setPassword("");
+          setTimeout(() => {
+            navigate("/signin");
+          }, 2000);
         }
         console.log(response.message);
       })
@@ -28,6 +34,7 @@ const ResetPassword = () => {
 
   return (
     <div className="container">
+      <ToastContainer />
       <div className="row justify-content-center">
         <div className="col-md-6">
           <h1 className="text-center mt-5 mb-5">Reset Password</h1>
